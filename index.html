@@ -30,17 +30,47 @@
 				opacity: 0;
 				transition: opacity 1.5s ease-in-out;
 			}
+
+			@keyframes pulse {
+				0%   { opacity: 1; }
+				50%  { opacity: 0.3; }
+				100% { opacity: 1; }
+			}
+
+			.btn-hygger {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background-color: #000000;
+				color: #ffffff;
+				border: none;
+				padding: 14px 24px;
+				font-family: Georgia, serif;
+				font-size: 0.85rem;
+				letter-spacing: 0.08em;
+				cursor: pointer;
+				animation: pulse 2s ease-in-out infinite;
+				transition: background-color 0.2s ease, transform 0.2s ease;
+				white-space: nowrap;
+			}
+
+			.btn-hygger:hover {
+				background-color: #333333;
+				transform: translate(-50%, -50%) scale(1.05);
+				cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewport='0 0 32 32'><text y='24' font-size='24'>🖱️</text></svg>") 16 16, pointer;
+			}
 		</style>
 	</head>
 	<body>
 		<span class="word" id="word">hyggeministeriet</span>
+		<a href="hygger.html"><button class="btn-hygger">Hvordan bliver man en hygger?</button></a>
 
 		<script>
 			const el = document.getElementById("word");
 			const margin = 5;
 			const positions = [];
 
-			// Forudberegn 32 tilfældige positioner
 			for (let i = 0; i < 32; i++) {
 				positions.push({
 					top: margin + Math.random() * (100 - margin * 2),
@@ -54,17 +84,12 @@
 				const pos = positions[index % positions.length];
 				index++;
 
-				// Flyt til ny position mens den er usynlig
 				el.style.top = pos.top + "%";
 				el.style.left = pos.left + "%";
-
-				// Fade ind
 				el.style.opacity = "1";
 
-				// Fade ud efter 2 sekunder
 				setTimeout(() => {
 					el.style.opacity = "0";
-					// Vent på fade ud er færdig, vis næste
 					setTimeout(showNext, 1500);
 				}, 2000);
 			}
