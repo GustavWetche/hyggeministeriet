@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>hyggeministeriet — hygger?</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				background-color: #ffffff;
+				width: 100vw;
+				height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-family: Georgia, serif;
+			}
+
+			.container {
+				text-align: center;
+			}
+
+			h2 {
+				font-size: 1.2rem;
+				font-weight: normal;
+				letter-spacing: 0.05em;
+				margin-bottom: 2rem;
+				color: #000;
+			}
+
+			.svar {
+				display: flex;
+				gap: 1rem;
+				justify-content: center;
+				margin-bottom: 2rem;
+			}
+
+			.svar button {
+				background-color: #000;
+				color: #fff;
+				border: none;
+				padding: 12px 28px;
+				font-family: Georgia, serif;
+				font-size: 0.9rem;
+				letter-spacing: 0.08em;
+				cursor: pointer;
+				transition: background-color 0.2s ease, transform 0.2s ease;
+			}
+
+			.svar button:hover {
+				background-color: #333;
+				transform: scale(1.05);
+			}
+
+			.resultat {
+				display: none;
+				font-size: 1rem;
+				letter-spacing: 0.05em;
+				color: #000;
+				font-style: italic;
+				animation: fadeIn 1s ease-in-out;
+			}
+
+			@keyframes fadeIn {
+				from { opacity: 0; }
+				to   { opacity: 1; }
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div id="spoergsmaal">
+				<h2>Hvilket køn er du?</h2>
+				<div class="svar">
+					<button onclick="svar()">Mand</button>
+					<button onclick="svar()">Kvinde</button>
+				</div>
+			</div>
+			<p class="resultat" id="resultat">det er faktisk lige meget, hvis man er en hygger.</p>
+		</div>
+
+		<script>
+			function svar() {
+				document.getElementById("spoergsmaal").style.display = "none";
+				const r = document.getElementById("resultat");
+				r.style.display = "block";
+			}
+		</script>
+	</body>
+</html>
