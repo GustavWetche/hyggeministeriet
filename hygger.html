@@ -23,6 +23,8 @@
 
 			.container {
 				text-align: center;
+				max-width: 500px;
+				padding: 2rem;
 			}
 
 			h2 {
@@ -37,7 +39,6 @@
 				display: flex;
 				gap: 1rem;
 				justify-content: center;
-				margin-bottom: 2rem;
 			}
 
 			.svar button {
@@ -57,38 +58,120 @@
 				transform: scale(1.05);
 			}
 
-			.resultat {
-				display: none;
+			.besked {
 				font-size: 1rem;
 				letter-spacing: 0.05em;
 				color: #000;
 				font-style: italic;
-				animation: fadeIn 1s ease-in-out;
+				opacity: 0;
+				transition: opacity 1.2s ease-in-out;
+				min-height: 2rem;
 			}
 
-			@keyframes fadeIn {
-				from { opacity: 0; }
-				to   { opacity: 1; }
+			.sektion {
+				display: none;
+			}
+
+			.sektion.aktiv {
+				display: block;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
-			<div id="spoergsmaal">
+
+			<!-- Spørgsmål 1 -->
+			<div id="s1" class="sektion aktiv">
 				<h2>Hvilket køn er du?</h2>
 				<div class="svar">
-					<button onclick="svar()">Mand</button>
-					<button onclick="svar()">Kvinde</button>
+					<button onclick="svar1()">Mand</button>
+					<button onclick="svar1()">Kvinde</button>
 				</div>
 			</div>
-			<p class="resultat" id="resultat">det er faktisk lige meget, hvis man er en hygger.</p>
+
+			<!-- Svar på spørgsmål 1 -->
+			<div id="s1-svar" class="sektion">
+				<p class="besked" id="s1-tekst1">det er faktisk lige meget, hvis man er en ægte hygger.</p>
+				<p class="besked" id="s1-tekst2">... men det er en ærlig fejl.</p>
+				<p class="besked" id="s1-tekst3">Nu videre til næste spørgsmål.</p>
+			</div>
+
+			<!-- Spørgsmål 2 -->
+			<div id="s2" class="sektion">
+				<h2>Har du hyggelyde?</h2>
+				<div class="svar">
+					<button onclick="svar2ja()">Ja</button>
+					<button onclick="svar2nej()">Nej</button>
+				</div>
+			</div>
+
+			<!-- Svar nej på spørgsmål 2 -->
+			<div id="s2-nej" class="sektion">
+				<p class="besked" id="s2-nej-tekst">du er ikke egnet til at blive en hygger.</p>
+				<div class="svar" id="s2-nej-knap" style="margin-top: 2rem; opacity: 0; transition: opacity 1.2s ease-in-out;">
+					<button onclick="window.location.href='index.html'">Prøv at bevis dit værd igen</button>
+				</div>
+			</div>
+
+			<!-- Spørgsmål 3 -->
+			<div id="s3" class="sektion">
+				<h2>Er de high pitched?</h2>
+				<div class="svar">
+					<button onclick="alert('coming soon...')">Ja</button>
+					<button onclick="alert('coming soon...')">Nej</button>
+				</div>
+			</div>
+
 		</div>
 
 		<script>
-			function svar() {
-				document.getElementById("spoergsmaal").style.display = "none";
-				const r = document.getElementById("resultat");
-				r.style.display = "block";
+			function vis(id) {
+				document.querySelectorAll(".sektion").forEach(el => el.classList.remove("aktiv"));
+				document.getElementById(id).classList.add("aktiv");
+			}
+
+			function fadeIn(el, callback) {
+				el.style.opacity = "0";
+				setTimeout(() => {
+					el.style.opacity = "1";
+					setTimeout(() => {
+						if (callback) {
+							el.style.opacity = "0";
+							setTimeout(callback, 1200);
+						}
+					}, 2500);
+				}, 100);
+			}
+
+			function svar1() {
+				vis("s1-svar");
+				const t1 = document.getElementById("s1-tekst1");
+				const t2 = document.getElementById("s1-tekst2");
+				const t3 = document.getElementById("s1-tekst3");
+
+				fadeIn(t1, () => {
+					fadeIn(t2, () => {
+						t3.style.opacity = "1";
+						setTimeout(() => {
+							t3.style.opacity = "0";
+							setTimeout(() => vis("s2"), 1200);
+						}, 2000);
+					});
+				});
+			}
+
+			function svar2nej() {
+				vis("s2-nej");
+				const el = document.getElementById("s2-nej-tekst");
+				const knap = document.getElementById("s2-nej-knap");
+				setTimeout(() => {
+					el.style.opacity = "1";
+					setTimeout(() => knap.style.opacity = "1", 1500);
+				}, 100);
+			}
+
+			function svar2ja() {
+				vis("s3");
 			}
 		</script>
 	</body>
