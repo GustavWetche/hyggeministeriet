@@ -5,11 +5,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<style>
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
+			* { margin: 0; padding: 0; box-sizing: border-box; }
 
 			body {
 				background-color: #ffffff;
@@ -23,7 +19,7 @@
 
 			.container {
 				text-align: center;
-				max-width: 520px;
+				max-width: 620px;
 				padding: 2rem;
 			}
 
@@ -77,34 +73,47 @@
 				margin-bottom: 0.8rem;
 			}
 
-			.sektion {
-				display: none;
+			.sektion { display: none; }
+			.sektion.aktiv { display: block; }
+
+			/* Billeder */
+			.billeder {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 0.8rem;
+				margin-top: 1.5rem;
 			}
 
-			.sektion.aktiv {
+			.billeder button {
+				padding: 0;
+				border: 3px solid transparent;
+				background: none;
+				cursor: pointer;
+				transition: border-color 0.2s ease, transform 0.2s ease;
+				overflow: hidden;
+			}
+
+			.billeder button:hover {
+				border-color: #000;
+				transform: scale(1.03);
+			}
+
+			.billeder button img {
+				width: 100%;
+				height: 140px;
+				object-fit: cover;
 				display: block;
 			}
 
-			/* Bjørn */
-			.bjorn {
-				font-size: 5rem;
-				margin-bottom: 1.5rem;
-				display: block;
-				animation: bounce 1.5s ease-in-out infinite;
-			}
-
+			/* Score */
 			@keyframes bounce {
 				0%, 100% { transform: translateY(0); }
 				50%       { transform: translateY(-10px); }
 			}
 
 			@keyframes sad {
-				0%, 100% { transform: rotate(-3deg); }
-				50%       { transform: rotate(3deg); }
-			}
-
-			.bjorn.ked {
-				animation: sad 2s ease-in-out infinite;
+				0%, 100% { transform: rotate(-4deg); }
+				50%       { transform: rotate(4deg); }
 			}
 
 			.score-tekst {
@@ -135,9 +144,9 @@
 	<body>
 		<div class="container">
 
-			<!-- Spørgsmål 1 -->
+			<!-- S1: Telefon -->
 			<div id="s1" class="sektion aktiv">
-				<p class="nummer">spørgsmål 1 / 10</p>
+				<p class="nummer">spørgsmål 1 / 12</p>
 				<h2>Kan du sidde stille i mindst én time uden at tjekke din telefon?</h2>
 				<div class="svar">
 					<button onclick="svar(1, true)">Ja</button>
@@ -145,9 +154,9 @@
 				</div>
 			</div>
 
-			<!-- Spørgsmål 2 -->
+			<!-- S2: Tæppe -->
 			<div id="s2" class="sektion">
-				<p class="nummer">spørgsmål 2 / 10</p>
+				<p class="nummer">spørgsmål 2 / 12</p>
 				<h2>Har du et yndlingstæppe?</h2>
 				<div class="svar">
 					<button onclick="svar(2, true)">Ja</button>
@@ -155,9 +164,9 @@
 				</div>
 			</div>
 
-			<!-- Spørgsmål 3 -->
+			<!-- S3: Stearinlys -->
 			<div id="s3" class="sektion">
-				<p class="nummer">spørgsmål 3 / 10</p>
+				<p class="nummer">spørgsmål 3 / 12</p>
 				<h2>Tænder du stearinlys, selv når du er alene?</h2>
 				<div class="svar">
 					<button onclick="svar(3, true)">Ja</button>
@@ -165,79 +174,119 @@
 				</div>
 			</div>
 
-			<!-- Spørgsmål 4 -->
+			<!-- S4: Hyggelyde ja/nej -->
 			<div id="s4" class="sektion">
-				<p class="nummer">spørgsmål 4 / 10</p>
-				<h2>Laver du lyde, når maden smager godt?</h2>
+				<p class="nummer">spørgsmål 4 / 12</p>
+				<h2>Har du hyggelyde?</h2>
 				<div class="svar">
-					<button onclick="svar(4, true)">Ja</button>
+					<button onclick="s4ja()">Ja</button>
 					<button onclick="svar(4, false)">Nej</button>
 				</div>
 			</div>
 
-			<!-- Spørgsmål 5 -->
+			<!-- S4b: High pitched? (kun hvis ja) -->
+			<div id="s4b" class="sektion">
+				<p class="nummer">spørgsmål 4b / 12</p>
+				<h2>Er de high pitched?</h2>
+				<div class="svar">
+					<button onclick="svar('4b', true)">Ja</button>
+					<button onclick="svar('4b', false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- S5: Mad lyde -->
 			<div id="s5" class="sektion">
-				<p class="nummer">spørgsmål 5 / 10</p>
-				<h2>Foretrækker du regn udenfor, når du er indenfor?</h2>
+				<p class="nummer">spørgsmål 5 / 12</p>
+				<h2>Laver du lyde, når maden smager godt?</h2>
 				<div class="svar">
 					<button onclick="svar(5, true)">Ja</button>
 					<button onclick="svar(5, false)">Nej</button>
 				</div>
 			</div>
 
-			<!-- Spørgsmål 6 -->
+			<!-- S6: Kaffe -->
 			<div id="s6" class="sektion">
-				<p class="nummer">spørgsmål 6 / 10</p>
-				<h2>Har du nogensinde sagt "det er bare hyggeligt" som en komplet forklaring?</h2>
+				<p class="nummer">spørgsmål 6 / 12</p>
+				<h2>Er kaffe om morgenen det vigtigste?</h2>
 				<div class="svar">
 					<button onclick="svar(6, true)">Ja</button>
 					<button onclick="svar(6, false)">Nej</button>
 				</div>
 			</div>
 
-			<!-- Spørgsmål 7 -->
+			<!-- S7: Regn -->
 			<div id="s7" class="sektion">
-				<p class="nummer">spørgsmål 7 / 10</p>
-				<h2>Kan du lide at lave mad til andre?</h2>
+				<p class="nummer">spørgsmål 7 / 12</p>
+				<h2>Foretrækker du regn udenfor, når du er indenfor?</h2>
 				<div class="svar">
 					<button onclick="svar(7, true)">Ja</button>
 					<button onclick="svar(7, false)">Nej</button>
 				</div>
 			</div>
 
-			<!-- Spørgsmål 8 -->
+			<!-- S8: "det er bare hyggeligt" -->
 			<div id="s8" class="sektion">
-				<p class="nummer">spørgsmål 8 / 10</p>
-				<h2>Bliver du glad af en kop varm kakao?</h2>
+				<p class="nummer">spørgsmål 8 / 12</p>
+				<h2>Har du nogensinde sagt "det er bare hyggeligt" som en komplet forklaring?</h2>
 				<div class="svar">
 					<button onclick="svar(8, true)">Ja</button>
 					<button onclick="svar(8, false)">Nej</button>
 				</div>
 			</div>
 
-			<!-- Spørgsmål 9 -->
+			<!-- S9: Mad til andre -->
 			<div id="s9" class="sektion">
-				<p class="nummer">spørgsmål 9 / 10</p>
-				<h2>Er du den type, der foreslår "vi bliver bare hjemme"?</h2>
+				<p class="nummer">spørgsmål 9 / 12</p>
+				<h2>Kan du lide at lave mad til andre?</h2>
 				<div class="svar">
 					<button onclick="svar(9, true)">Ja</button>
 					<button onclick="svar(9, false)">Nej</button>
 				</div>
 			</div>
 
-			<!-- Spørgsmål 10 -->
+			<!-- S10: Kakao -->
 			<div id="s10" class="sektion">
-				<p class="nummer">spørgsmål 10 / 10</p>
-				<h2>Har du nogensinde følt varme ved at se på et bål eller et ildsted — selv på video?</h2>
+				<p class="nummer">spørgsmål 10 / 12</p>
+				<h2>Bliver du glad af en kop varm kakao?</h2>
 				<div class="svar">
 					<button onclick="svar(10, true)">Ja</button>
 					<button onclick="svar(10, false)">Nej</button>
 				</div>
 			</div>
 
+			<!-- S11: Blive hjemme -->
+			<div id="s11" class="sektion">
+				<p class="nummer">spørgsmål 11 / 12</p>
+				<h2>Er du den type, der foreslår "vi bliver bare hjemme"?</h2>
+				<div class="svar">
+					<button onclick="svar(11, true)">Ja</button>
+					<button onclick="svar(11, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- S12: Billeder -->
+			<div id="s12" class="sektion">
+				<p class="nummer">spørgsmål 12 / 12</p>
+				<h2>Hvilket af disse huse er hyggeligt?</h2>
+				<div class="billeder">
+					<button onclick="svar(12, false)">
+						<img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80" alt="Moderne sort luksusvilla" />
+					</button>
+					<button onclick="svar(12, false)">
+						<img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&q=80" alt="Sort luksusvilla" />
+					</button>
+					<button onclick="svar(12, true)">
+						<img src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400&q=80" alt="Hytte i skoven med bål" />
+					</button>
+					<button onclick="svar(12, false)">
+						<img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&q=80" alt="Luksuriøst sort hus" />
+					</button>
+				</div>
+			</div>
+
 			<!-- Resultat -->
 			<div id="resultat" class="sektion">
-				<span class="bjorn" id="bjorn">🐻</span>
+				<div id="bjorn-container" style="width:140px; margin: 0 auto 1.5rem auto;"></div>
 				<div class="score-tekst" id="score-tekst"></div>
 				<div class="score-sub" id="score-sub"></div>
 				<div class="igen-knap svar" id="igen-knap">
@@ -245,19 +294,96 @@
 				</div>
 			</div>
 
+			<!-- SVG bjørne (skjult) -->
+			<div style="display:none">
+				<svg id="bjorn-glad" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="38" cy="42" r="16" fill="#c8a07a"/>
+					<circle cx="102" cy="42" r="16" fill="#c8a07a"/>
+					<circle cx="38" cy="42" r="9" fill="#e8c8a8"/>
+					<circle cx="102" cy="42" r="9" fill="#e8c8a8"/>
+					<ellipse cx="70" cy="80" rx="46" ry="44" fill="#c8a07a"/>
+					<ellipse cx="70" cy="92" rx="22" ry="16" fill="#e8c8a8"/>
+					<ellipse cx="54" cy="72" rx="5" ry="6" fill="#2a1a0a"/>
+					<ellipse cx="86" cy="72" rx="5" ry="6" fill="#2a1a0a"/>
+					<circle cx="56" cy="70" r="2" fill="#fff"/>
+					<circle cx="88" cy="70" r="2" fill="#fff"/>
+					<ellipse cx="70" cy="88" rx="7" ry="5" fill="#8a5a3a"/>
+					<path d="M58 98 Q70 110 82 98" fill="none" stroke="#8a5a3a" stroke-width="2.5" stroke-linecap="round"/>
+					<ellipse cx="46" cy="88" rx="9" ry="6" fill="#e8a090" opacity="0.5"/>
+					<ellipse cx="94" cy="88" rx="9" ry="6" fill="#e8a090" opacity="0.5"/>
+					<ellipse cx="70" cy="138" rx="34" ry="28" fill="#c8a07a"/>
+					<ellipse cx="70" cy="140" rx="20" ry="18" fill="#e8c8a8"/>
+					<ellipse cx="30" cy="118" rx="12" ry="20" fill="#c8a07a" transform="rotate(-30 30 118)"/>
+					<ellipse cx="110" cy="118" rx="12" ry="20" fill="#c8a07a" transform="rotate(30 110 118)"/>
+				</svg>
+
+				<svg id="bjorn-neutral" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="38" cy="42" r="16" fill="#c8a07a"/>
+					<circle cx="102" cy="42" r="16" fill="#c8a07a"/>
+					<circle cx="38" cy="42" r="9" fill="#e8c8a8"/>
+					<circle cx="102" cy="42" r="9" fill="#e8c8a8"/>
+					<ellipse cx="70" cy="80" rx="46" ry="44" fill="#c8a07a"/>
+					<ellipse cx="70" cy="92" rx="22" ry="16" fill="#e8c8a8"/>
+					<ellipse cx="54" cy="74" rx="5" ry="5" fill="#2a1a0a"/>
+					<ellipse cx="86" cy="74" rx="5" ry="5" fill="#2a1a0a"/>
+					<circle cx="56" cy="72" r="2" fill="#fff"/>
+					<circle cx="88" cy="72" r="2" fill="#fff"/>
+					<ellipse cx="70" cy="89" rx="7" ry="5" fill="#8a5a3a"/>
+					<path d="M60 100 Q70 102 80 100" fill="none" stroke="#8a5a3a" stroke-width="2.5" stroke-linecap="round"/>
+					<ellipse cx="70" cy="138" rx="34" ry="28" fill="#c8a07a"/>
+					<ellipse cx="70" cy="140" rx="20" ry="18" fill="#e8c8a8"/>
+					<ellipse cx="28" cy="130" rx="12" ry="20" fill="#c8a07a" transform="rotate(10 28 130)"/>
+					<ellipse cx="112" cy="130" rx="12" ry="20" fill="#c8a07a" transform="rotate(-10 112 130)"/>
+				</svg>
+
+				<svg id="bjorn-ked" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="38" cy="42" r="16" fill="#b89068"/>
+					<circle cx="102" cy="42" r="16" fill="#b89068"/>
+					<circle cx="38" cy="42" r="9" fill="#d8b898"/>
+					<circle cx="102" cy="42" r="9" fill="#d8b898"/>
+					<ellipse cx="70" cy="80" rx="46" ry="44" fill="#b89068"/>
+					<ellipse cx="70" cy="92" rx="22" ry="16" fill="#d8b898"/>
+					<ellipse cx="54" cy="76" rx="5" ry="5" fill="#2a1a0a"/>
+					<ellipse cx="86" cy="76" rx="5" ry="5" fill="#2a1a0a"/>
+					<circle cx="56" cy="74" r="2" fill="#fff"/>
+					<circle cx="88" cy="74" r="2" fill="#fff"/>
+					<path d="M46 66 Q54 62 60 65" fill="none" stroke="#2a1a0a" stroke-width="2" stroke-linecap="round"/>
+					<path d="M80 65 Q86 62 94 66" fill="none" stroke="#2a1a0a" stroke-width="2" stroke-linecap="round"/>
+					<ellipse cx="70" cy="90" rx="7" ry="5" fill="#7a4a2a"/>
+					<path d="M58 103 Q70 95 82 103" fill="none" stroke="#7a4a2a" stroke-width="2.5" stroke-linecap="round"/>
+					<ellipse cx="50" cy="84" rx="3" ry="4" fill="#a0c8e8" opacity="0.8"/>
+					<ellipse cx="90" cy="84" rx="3" ry="4" fill="#a0c8e8" opacity="0.8"/>
+					<ellipse cx="70" cy="138" rx="34" ry="28" fill="#b89068"/>
+					<ellipse cx="70" cy="140" rx="20" ry="18" fill="#d8b898"/>
+					<ellipse cx="26" cy="135" rx="11" ry="20" fill="#b89068" transform="rotate(20 26 135)"/>
+					<ellipse cx="114" cy="135" rx="11" ry="20" fill="#b89068" transform="rotate(-20 114 135)"/>
+				</svg>
+			</div>
+
 		</div>
 
 		<script>
 			let point = 0;
+			const maxPoint = 12;
 
 			function svar(nr, rigtig) {
 				if (rigtig) point++;
 
-				if (nr < 10) {
-					skift("s" + nr, "s" + (nr + 1));
-				} else {
+				const rækkefølge = [1,2,3,4,'4b',5,6,7,8,9,10,11,12,'resultat'];
+				const nuværende = nr === '4b' ? '4b' : nr;
+				const idx = rækkefølge.indexOf(nuværende);
+				const næste = rækkefølge[idx + 1];
+
+				if (næste === 'resultat') {
 					visResultat();
+				} else {
+					skift("s" + nuværende, "s" + næste);
 				}
+			}
+
+			function s4ja() {
+				point++;
+				skift("s4", "s4b");
 			}
 
 			function skift(fra, til) {
@@ -267,33 +393,37 @@
 
 			function visResultat() {
 				document.querySelectorAll(".sektion").forEach(el => el.classList.remove("aktiv"));
-				const res = document.getElementById("resultat");
-				res.classList.add("aktiv");
+				document.getElementById("resultat").classList.add("aktiv");
 
-				const pct = Math.round((point / 10) * 100);
-				const bjorn = document.getElementById("bjorn");
+				const pct = Math.round((point / maxPoint) * 100);
+				const bjornContainer = document.getElementById("bjorn-container");
 				const scoreTekst = document.getElementById("score-tekst");
 				const scoreSub = document.getElementById("score-sub");
 				const igen = document.getElementById("igen-knap");
 
-				// Vælg bjørn og tekst baseret på score
+				let bjornId, animation, subTekst;
+
 				if (pct >= 80) {
-					bjorn.textContent = "🐻";
-					bjorn.classList.remove("ked");
-					scoreSub.textContent = "du er en hygger.";
+					bjornId = "bjorn-glad";
+					animation = "bounce 1.2s ease-in-out infinite";
+					subTekst = "du er en hygger.";
 				} else if (pct >= 50) {
-					bjorn.textContent = "🐻";
-					bjorn.classList.remove("ked");
-					scoreSub.textContent = "du er næsten en hygger.";
+					bjornId = "bjorn-neutral";
+					animation = "bounce 2s ease-in-out infinite";
+					subTekst = "du er næsten en hygger.";
 				} else {
-					bjorn.textContent = "🐻";
-					bjorn.classList.add("ked");
-					scoreSub.textContent = "du er ikke en hygger.";
+					bjornId = "bjorn-ked";
+					animation = "sad 2.5s ease-in-out infinite";
+					subTekst = "du er ikke en hygger.";
 				}
 
+				const svgKopi = document.getElementById(bjornId).cloneNode(true);
+				svgKopi.style.animation = animation;
+				svgKopi.style.display = "block";
+				bjornContainer.appendChild(svgKopi);
+				scoreSub.textContent = subTekst;
 				scoreTekst.textContent = pct + "%";
 
-				// Fade ind
 				setTimeout(() => {
 					scoreTekst.style.opacity = "1";
 					setTimeout(() => {
