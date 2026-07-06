@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>hyggeministeriet — hygger?</title>
+		<title>hyggeministeriet — er du en hygger?</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<style>
@@ -14,7 +14,7 @@
 			body {
 				background-color: #ffffff;
 				width: 100vw;
-				height: 100vh;
+				min-height: 100vh;
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -23,31 +23,39 @@
 
 			.container {
 				text-align: center;
-				max-width: 500px;
+				max-width: 520px;
 				padding: 2rem;
 			}
 
 			h2 {
-				font-size: 1.2rem;
+				font-size: 1.1rem;
 				font-weight: normal;
 				letter-spacing: 0.05em;
-				margin-bottom: 2rem;
+				margin-bottom: 0.5rem;
 				color: #000;
+			}
+
+			.nummer {
+				font-size: 0.75rem;
+				letter-spacing: 0.1em;
+				color: #999;
+				margin-bottom: 1.8rem;
 			}
 
 			.svar {
 				display: flex;
 				gap: 1rem;
 				justify-content: center;
+				flex-wrap: wrap;
 			}
 
 			.svar button {
 				background-color: #000;
 				color: #fff;
 				border: none;
-				padding: 12px 28px;
+				padding: 12px 24px;
 				font-family: Georgia, serif;
-				font-size: 0.9rem;
+				font-size: 0.85rem;
 				letter-spacing: 0.08em;
 				cursor: pointer;
 				transition: background-color 0.2s ease, transform 0.2s ease;
@@ -65,7 +73,8 @@
 				font-style: italic;
 				opacity: 0;
 				transition: opacity 1.2s ease-in-out;
-				min-height: 2rem;
+				min-height: 1.5rem;
+				margin-bottom: 0.8rem;
 			}
 
 			.sektion {
@@ -75,6 +84,52 @@
 			.sektion.aktiv {
 				display: block;
 			}
+
+			/* Bjørn */
+			.bjorn {
+				font-size: 5rem;
+				margin-bottom: 1.5rem;
+				display: block;
+				animation: bounce 1.5s ease-in-out infinite;
+			}
+
+			@keyframes bounce {
+				0%, 100% { transform: translateY(0); }
+				50%       { transform: translateY(-10px); }
+			}
+
+			@keyframes sad {
+				0%, 100% { transform: rotate(-3deg); }
+				50%       { transform: rotate(3deg); }
+			}
+
+			.bjorn.ked {
+				animation: sad 2s ease-in-out infinite;
+			}
+
+			.score-tekst {
+				font-size: 2rem;
+				letter-spacing: 0.05em;
+				color: #000;
+				margin-bottom: 0.5rem;
+				opacity: 0;
+				transition: opacity 1.5s ease-in-out;
+			}
+
+			.score-sub {
+				font-size: 0.9rem;
+				font-style: italic;
+				color: #555;
+				letter-spacing: 0.05em;
+				opacity: 0;
+				transition: opacity 1.5s ease-in-out;
+				margin-bottom: 2rem;
+			}
+
+			.igen-knap {
+				opacity: 0;
+				transition: opacity 1s ease-in-out;
+			}
 		</style>
 	</head>
 	<body>
@@ -82,96 +137,170 @@
 
 			<!-- Spørgsmål 1 -->
 			<div id="s1" class="sektion aktiv">
-				<h2>Hvilket køn er du?</h2>
+				<p class="nummer">spørgsmål 1 / 10</p>
+				<h2>Kan du sidde stille i mindst én time uden at tjekke din telefon?</h2>
 				<div class="svar">
-					<button onclick="svar1()">Mand</button>
-					<button onclick="svar1()">Kvinde</button>
+					<button onclick="svar(1, true)">Ja</button>
+					<button onclick="svar(1, false)">Nej</button>
 				</div>
-			</div>
-
-			<!-- Svar på spørgsmål 1 -->
-			<div id="s1-svar" class="sektion">
-				<p class="besked" id="s1-tekst1">det er faktisk lige meget, hvis man er en ægte hygger.</p>
-				<p class="besked" id="s1-tekst2">... men det er en ærlig fejl.</p>
-				<p class="besked" id="s1-tekst3">Nu videre til næste spørgsmål.</p>
 			</div>
 
 			<!-- Spørgsmål 2 -->
 			<div id="s2" class="sektion">
-				<h2>Har du hyggelyde?</h2>
+				<p class="nummer">spørgsmål 2 / 10</p>
+				<h2>Har du et yndlingstæppe?</h2>
 				<div class="svar">
-					<button onclick="svar2ja()">Ja</button>
-					<button onclick="svar2nej()">Nej</button>
-				</div>
-			</div>
-
-			<!-- Svar nej på spørgsmål 2 -->
-			<div id="s2-nej" class="sektion">
-				<p class="besked" id="s2-nej-tekst">du er ikke egnet til at blive en hygger.</p>
-				<div class="svar" id="s2-nej-knap" style="margin-top: 2rem; opacity: 0; transition: opacity 1.2s ease-in-out;">
-					<button onclick="window.location.href='index.html'">Prøv at bevis dit værd igen</button>
+					<button onclick="svar(2, true)">Ja</button>
+					<button onclick="svar(2, false)">Nej</button>
 				</div>
 			</div>
 
 			<!-- Spørgsmål 3 -->
 			<div id="s3" class="sektion">
-				<h2>Er de high pitched?</h2>
+				<p class="nummer">spørgsmål 3 / 10</p>
+				<h2>Tænder du stearinlys, selv når du er alene?</h2>
 				<div class="svar">
-					<button onclick="alert('coming soon...')">Ja</button>
-					<button onclick="alert('coming soon...')">Nej</button>
+					<button onclick="svar(3, true)">Ja</button>
+					<button onclick="svar(3, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- Spørgsmål 4 -->
+			<div id="s4" class="sektion">
+				<p class="nummer">spørgsmål 4 / 10</p>
+				<h2>Laver du lyde, når maden smager godt?</h2>
+				<div class="svar">
+					<button onclick="svar(4, true)">Ja</button>
+					<button onclick="svar(4, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- Spørgsmål 5 -->
+			<div id="s5" class="sektion">
+				<p class="nummer">spørgsmål 5 / 10</p>
+				<h2>Foretrækker du regn udenfor, når du er indenfor?</h2>
+				<div class="svar">
+					<button onclick="svar(5, true)">Ja</button>
+					<button onclick="svar(5, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- Spørgsmål 6 -->
+			<div id="s6" class="sektion">
+				<p class="nummer">spørgsmål 6 / 10</p>
+				<h2>Har du nogensinde sagt "det er bare hyggeligt" som en komplet forklaring?</h2>
+				<div class="svar">
+					<button onclick="svar(6, true)">Ja</button>
+					<button onclick="svar(6, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- Spørgsmål 7 -->
+			<div id="s7" class="sektion">
+				<p class="nummer">spørgsmål 7 / 10</p>
+				<h2>Kan du lide at lave mad til andre?</h2>
+				<div class="svar">
+					<button onclick="svar(7, true)">Ja</button>
+					<button onclick="svar(7, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- Spørgsmål 8 -->
+			<div id="s8" class="sektion">
+				<p class="nummer">spørgsmål 8 / 10</p>
+				<h2>Bliver du glad af en kop varm kakao?</h2>
+				<div class="svar">
+					<button onclick="svar(8, true)">Ja</button>
+					<button onclick="svar(8, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- Spørgsmål 9 -->
+			<div id="s9" class="sektion">
+				<p class="nummer">spørgsmål 9 / 10</p>
+				<h2>Er du den type, der foreslår "vi bliver bare hjemme"?</h2>
+				<div class="svar">
+					<button onclick="svar(9, true)">Ja</button>
+					<button onclick="svar(9, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- Spørgsmål 10 -->
+			<div id="s10" class="sektion">
+				<p class="nummer">spørgsmål 10 / 10</p>
+				<h2>Har du nogensinde følt varme ved at se på et bål eller et ildsted — selv på video?</h2>
+				<div class="svar">
+					<button onclick="svar(10, true)">Ja</button>
+					<button onclick="svar(10, false)">Nej</button>
+				</div>
+			</div>
+
+			<!-- Resultat -->
+			<div id="resultat" class="sektion">
+				<span class="bjorn" id="bjorn">🐻</span>
+				<div class="score-tekst" id="score-tekst"></div>
+				<div class="score-sub" id="score-sub"></div>
+				<div class="igen-knap svar" id="igen-knap">
+					<button onclick="window.location.href='index.html'">Prøv at bevis dit værd igen</button>
 				</div>
 			</div>
 
 		</div>
 
 		<script>
-			function vis(id) {
+			let point = 0;
+
+			function svar(nr, rigtig) {
+				if (rigtig) point++;
+
+				if (nr < 10) {
+					skift("s" + nr, "s" + (nr + 1));
+				} else {
+					visResultat();
+				}
+			}
+
+			function skift(fra, til) {
+				document.getElementById(fra).classList.remove("aktiv");
+				document.getElementById(til).classList.add("aktiv");
+			}
+
+			function visResultat() {
 				document.querySelectorAll(".sektion").forEach(el => el.classList.remove("aktiv"));
-				document.getElementById(id).classList.add("aktiv");
-			}
+				const res = document.getElementById("resultat");
+				res.classList.add("aktiv");
 
-			function fadeIn(el, callback) {
-				el.style.opacity = "0";
+				const pct = Math.round((point / 10) * 100);
+				const bjorn = document.getElementById("bjorn");
+				const scoreTekst = document.getElementById("score-tekst");
+				const scoreSub = document.getElementById("score-sub");
+				const igen = document.getElementById("igen-knap");
+
+				// Vælg bjørn og tekst baseret på score
+				if (pct >= 80) {
+					bjorn.textContent = "🐻";
+					bjorn.classList.remove("ked");
+					scoreSub.textContent = "du er en hygger.";
+				} else if (pct >= 50) {
+					bjorn.textContent = "🐻";
+					bjorn.classList.remove("ked");
+					scoreSub.textContent = "du er næsten en hygger.";
+				} else {
+					bjorn.textContent = "🐻";
+					bjorn.classList.add("ked");
+					scoreSub.textContent = "du er ikke en hygger.";
+				}
+
+				scoreTekst.textContent = pct + "%";
+
+				// Fade ind
 				setTimeout(() => {
-					el.style.opacity = "1";
+					scoreTekst.style.opacity = "1";
 					setTimeout(() => {
-						if (callback) {
-							el.style.opacity = "0";
-							setTimeout(callback, 1200);
-						}
-					}, 2500);
-				}, 100);
-			}
-
-			function svar1() {
-				vis("s1-svar");
-				const t1 = document.getElementById("s1-tekst1");
-				const t2 = document.getElementById("s1-tekst2");
-				const t3 = document.getElementById("s1-tekst3");
-
-				fadeIn(t1, () => {
-					fadeIn(t2, () => {
-						t3.style.opacity = "1";
-						setTimeout(() => {
-							t3.style.opacity = "0";
-							setTimeout(() => vis("s2"), 1200);
-						}, 2000);
-					});
-				});
-			}
-
-			function svar2nej() {
-				vis("s2-nej");
-				const el = document.getElementById("s2-nej-tekst");
-				const knap = document.getElementById("s2-nej-knap");
-				setTimeout(() => {
-					el.style.opacity = "1";
-					setTimeout(() => knap.style.opacity = "1", 1500);
-				}, 100);
-			}
-
-			function svar2ja() {
-				vis("s3");
+						scoreSub.style.opacity = "1";
+						setTimeout(() => igen.style.opacity = "1", 1000);
+					}, 800);
+				}, 300);
 			}
 		</script>
 	</body>
