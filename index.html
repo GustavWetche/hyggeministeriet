@@ -1,96 +1,482 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="da">
 	<head>
 		<title>hyggeministeriet</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<style>
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-			}
+			* { margin: 0; padding: 0; box-sizing: border-box; }
 
 			body {
 				background-color: #ffffff;
-				width: 100vw;
-				height: 100vh;
-				overflow: hidden;
-				position: relative;
+				color: #000;
+				min-height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-family: Georgia, serif;
+				overflow-x: hidden;
 			}
 
+			/* Det svævende "hyggeministeriet" på forsiden */
 			.word {
-				position: absolute;
-				color: #000000;
-				font-family: Georgia, serif;
+				position: fixed;
 				font-size: 1rem;
-				font-weight: normal;
 				letter-spacing: 0.1em;
 				white-space: nowrap;
 				opacity: 0;
 				transition: opacity 1.5s ease-in-out;
+				pointer-events: none;
+				z-index: 0;
+			}
+			.word.skjult { display: none; }
+
+			.container {
+				position: relative;
+				z-index: 1;
+				text-align: center;
+				max-width: 620px;
+				width: 100%;
+				padding: 2rem 1.25rem;
 			}
 
-			@keyframes pulse {
-				0%   { opacity: 1; }
-				50%  { opacity: 0.3; }
-				100% { opacity: 1; }
+			.sektion { display: none; }
+			.sektion.aktiv { display: block; }
+
+			.fade { animation: fadeind 0.6s ease; }
+			@keyframes fadeind {
+				from { opacity: 0; transform: translateY(6px); }
+				to   { opacity: 1; transform: none; }
 			}
 
-			.btn-hygger {
-				position: fixed;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				background-color: #000000;
-				color: #ffffff;
+			/* Intro */
+			#intro { background: #fff; padding: 1.5rem 0.5rem; }
+
+			h1 {
+				font-size: 1.8rem;
+				font-weight: normal;
+				letter-spacing: 0.1em;
+				margin-bottom: 1.5rem;
+			}
+
+			.intro-tekst {
+				font-size: 0.95rem;
+				line-height: 1.7;
+				color: #333;
+				margin-bottom: 1rem;
+			}
+			.intro-tekst:last-of-type { margin-bottom: 2rem; }
+
+			/* Quiz */
+			h2 {
+				font-size: 1.1rem;
+				font-weight: normal;
+				letter-spacing: 0.05em;
+				line-height: 1.5;
+				margin-bottom: 1.8rem;
+			}
+
+			.nummer {
+				font-size: 0.75rem;
+				letter-spacing: 0.1em;
+				color: #999;
+				margin-bottom: 0.8rem;
+			}
+
+			.progress {
+				height: 2px;
+				background: #eee;
+				margin: 0 auto 1.8rem auto;
+				max-width: 240px;
+			}
+			#progress-fyld {
+				height: 100%;
+				width: 0;
+				background: #000;
+				transition: width 0.4s ease;
+			}
+
+			.svar {
+				display: flex;
+				gap: 1rem;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+
+			.knap {
+				background-color: #000;
+				color: #fff;
 				border: none;
-				padding: 14px 24px;
+				padding: 12px 24px;
 				font-family: Georgia, serif;
 				font-size: 0.85rem;
 				letter-spacing: 0.08em;
 				cursor: pointer;
-				animation: pulse 4s ease-in-out infinite;
 				transition: background-color 0.2s ease, transform 0.2s ease;
-				white-space: nowrap;
+			}
+			.knap:hover { background-color: #333; transform: scale(1.05); }
+
+			@keyframes pulse {
+				0%, 100% { opacity: 1; }
+				50%      { opacity: 0.3; }
+			}
+			.puls { animation: pulse 4s ease-in-out infinite; }
+
+			/* Billedspørgsmål */
+			.billeder {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 0.8rem;
+			}
+			.billeder button {
+				padding: 0;
+				border: 3px solid transparent;
+				background: none;
+				cursor: pointer;
+				transition: border-color 0.2s ease, transform 0.2s ease;
+				overflow: hidden;
+			}
+			.billeder button:hover { border-color: #000; transform: scale(1.03); }
+			.billeder img {
+				width: 100%;
+				height: 140px;
+				object-fit: cover;
+				display: block;
 			}
 
-	
+			/* Resultat */
+			@keyframes bounce {
+				0%, 100% { transform: translateY(0); }
+				50%      { transform: translateY(-10px); }
+			}
+			@keyframes sad {
+				0%, 100% { transform: rotate(-4deg); }
+				50%      { transform: rotate(4deg); }
+			}
+
+			#bjorn-container { width: 140px; margin: 0 auto 1.5rem auto; }
+
+			.score-tekst, .score-sub, .score-point, .igen-knap {
+				opacity: 0;
+				transition: opacity 1.5s ease-in-out;
+			}
+			.score-tekst { font-size: 2rem; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+			.score-sub { font-size: 0.9rem; font-style: italic; color: #555; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+			.score-point { font-size: 0.75rem; letter-spacing: 0.1em; color: #999; margin-bottom: 2rem; }
 		</style>
 	</head>
 	<body>
 		<span class="word" id="word">hyggeministeriet</span>
-		<a href="hygger.html"><button class="btn-hygger">Kan du blive kategoriseret som en hygger?</button></a>
+
+		<div class="container">
+
+			<!-- INTRO -->
+			<div id="intro" class="sektion aktiv">
+				<p class="nummer">velkommen til</p>
+				<h1>hyggeministeriet</h1>
+				<p class="intro-tekst">
+					Hyggeministeriet er Danmarks (helt uofficielle) myndighed for hygge.
+					Vi fører tilsyn med stearinlys, uldsokker, varm kakao og søndage,
+					der ikke skal nå noget som helst.
+				</p>
+				<p class="intro-tekst">
+					Ministeriet har udviklet en officiel test, der én gang for alle afgør,
+					om du kan kategoriseres som en hygger. Svar ærligt – ministeriet kan mærke det, hvis du lyver.
+				</p>
+				<button class="knap puls" onclick="start()">Kan du blive kategoriseret som en hygger?</button>
+			</div>
+
+			<!-- QUIZ -->
+			<div id="quiz" class="sektion">
+				<div id="quiz-indhold">
+					<p class="nummer" id="nummer"></p>
+					<div class="progress"><div id="progress-fyld"></div></div>
+					<h2 id="spoergsmaal"></h2>
+					<div id="svar"></div>
+				</div>
+			</div>
+
+			<!-- RESULTAT -->
+			<div id="resultat" class="sektion">
+				<div id="bjorn-container"></div>
+				<div class="score-tekst" id="score-tekst"></div>
+				<div class="score-sub" id="score-sub"></div>
+				<div class="score-point" id="score-point"></div>
+				<div class="igen-knap svar" id="igen-knap">
+					<button class="knap" onclick="start()">Prøv at bevis dit værd igen</button>
+				</div>
+			</div>
+
+			<!-- SVG-bjørne (skjult, kopieres ind i resultatet) -->
+			<div style="display:none">
+				<svg id="bjorn-glad" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="38" cy="42" r="16" fill="#c8a07a"/>
+					<circle cx="102" cy="42" r="16" fill="#c8a07a"/>
+					<circle cx="38" cy="42" r="9" fill="#e8c8a8"/>
+					<circle cx="102" cy="42" r="9" fill="#e8c8a8"/>
+					<ellipse cx="70" cy="80" rx="46" ry="44" fill="#c8a07a"/>
+					<ellipse cx="70" cy="92" rx="22" ry="16" fill="#e8c8a8"/>
+					<ellipse cx="54" cy="72" rx="5" ry="6" fill="#2a1a0a"/>
+					<ellipse cx="86" cy="72" rx="5" ry="6" fill="#2a1a0a"/>
+					<circle cx="56" cy="70" r="2" fill="#fff"/>
+					<circle cx="88" cy="70" r="2" fill="#fff"/>
+					<ellipse cx="70" cy="88" rx="7" ry="5" fill="#8a5a3a"/>
+					<path d="M58 98 Q70 110 82 98" fill="none" stroke="#8a5a3a" stroke-width="2.5" stroke-linecap="round"/>
+					<ellipse cx="46" cy="88" rx="9" ry="6" fill="#e8a090" opacity="0.5"/>
+					<ellipse cx="94" cy="88" rx="9" ry="6" fill="#e8a090" opacity="0.5"/>
+					<ellipse cx="70" cy="138" rx="34" ry="28" fill="#c8a07a"/>
+					<ellipse cx="70" cy="140" rx="20" ry="18" fill="#e8c8a8"/>
+					<ellipse cx="30" cy="118" rx="12" ry="20" fill="#c8a07a" transform="rotate(-30 30 118)"/>
+					<ellipse cx="110" cy="118" rx="12" ry="20" fill="#c8a07a" transform="rotate(30 110 118)"/>
+				</svg>
+
+				<svg id="bjorn-neutral" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="38" cy="42" r="16" fill="#c8a07a"/>
+					<circle cx="102" cy="42" r="16" fill="#c8a07a"/>
+					<circle cx="38" cy="42" r="9" fill="#e8c8a8"/>
+					<circle cx="102" cy="42" r="9" fill="#e8c8a8"/>
+					<ellipse cx="70" cy="80" rx="46" ry="44" fill="#c8a07a"/>
+					<ellipse cx="70" cy="92" rx="22" ry="16" fill="#e8c8a8"/>
+					<ellipse cx="54" cy="74" rx="5" ry="5" fill="#2a1a0a"/>
+					<ellipse cx="86" cy="74" rx="5" ry="5" fill="#2a1a0a"/>
+					<circle cx="56" cy="72" r="2" fill="#fff"/>
+					<circle cx="88" cy="72" r="2" fill="#fff"/>
+					<ellipse cx="70" cy="89" rx="7" ry="5" fill="#8a5a3a"/>
+					<path d="M60 100 Q70 102 80 100" fill="none" stroke="#8a5a3a" stroke-width="2.5" stroke-linecap="round"/>
+					<ellipse cx="70" cy="138" rx="34" ry="28" fill="#c8a07a"/>
+					<ellipse cx="70" cy="140" rx="20" ry="18" fill="#e8c8a8"/>
+					<ellipse cx="28" cy="130" rx="12" ry="20" fill="#c8a07a" transform="rotate(10 28 130)"/>
+					<ellipse cx="112" cy="130" rx="12" ry="20" fill="#c8a07a" transform="rotate(-10 112 130)"/>
+				</svg>
+
+				<svg id="bjorn-ked" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="38" cy="42" r="16" fill="#b89068"/>
+					<circle cx="102" cy="42" r="16" fill="#b89068"/>
+					<circle cx="38" cy="42" r="9" fill="#d8b898"/>
+					<circle cx="102" cy="42" r="9" fill="#d8b898"/>
+					<ellipse cx="70" cy="80" rx="46" ry="44" fill="#b89068"/>
+					<ellipse cx="70" cy="92" rx="22" ry="16" fill="#d8b898"/>
+					<ellipse cx="54" cy="76" rx="5" ry="5" fill="#2a1a0a"/>
+					<ellipse cx="86" cy="76" rx="5" ry="5" fill="#2a1a0a"/>
+					<circle cx="56" cy="74" r="2" fill="#fff"/>
+					<circle cx="88" cy="74" r="2" fill="#fff"/>
+					<path d="M46 66 Q54 62 60 65" fill="none" stroke="#2a1a0a" stroke-width="2" stroke-linecap="round"/>
+					<path d="M80 65 Q86 62 94 66" fill="none" stroke="#2a1a0a" stroke-width="2" stroke-linecap="round"/>
+					<ellipse cx="70" cy="90" rx="7" ry="5" fill="#7a4a2a"/>
+					<path d="M58 103 Q70 95 82 103" fill="none" stroke="#7a4a2a" stroke-width="2.5" stroke-linecap="round"/>
+					<ellipse cx="50" cy="84" rx="3" ry="4" fill="#a0c8e8" opacity="0.8"/>
+					<ellipse cx="90" cy="84" rx="3" ry="4" fill="#a0c8e8" opacity="0.8"/>
+					<ellipse cx="70" cy="138" rx="34" ry="28" fill="#b89068"/>
+					<ellipse cx="70" cy="140" rx="20" ry="18" fill="#d8b898"/>
+					<ellipse cx="26" cy="135" rx="11" ry="20" fill="#b89068" transform="rotate(20 26 135)"/>
+					<ellipse cx="114" cy="135" rx="11" ry="20" fill="#b89068" transform="rotate(-20 114 135)"/>
+				</svg>
+			</div>
+		</div>
 
 		<script>
-			const el = document.getElementById("word");
-			const margin = 5;
-			const positions = [];
+			/* =========================================================
+			   SPØRGSMÅL – det er her, du redigerer.
+			   ja("...")  = svarer man Ja, får man et hyggepoint
+			   nej("...") = svarer man Nej, får man et hyggepoint
+			   Egne svarmuligheder: { q: "...", svar: [{ t: "tekst", p: point }, ...] }
+			   Opfølgningsspørgsmål: tilføj  opfolg: ja("...")  på et svar
+			   Slet bare de linjer, du ikke synes er gode nok.
+			   ========================================================= */
 
-			for (let i = 0; i < 32; i++) {
-				positions.push({
-					top: margin + Math.random() * (100 - margin * 2),
-					left: margin + Math.random() * (100 - margin * 2)
-				});
+			const ja  = q => ({ q, svar: [{ t: "Ja", p: 1 }, { t: "Nej", p: 0 }] });
+			const nej = q => ({ q, svar: [{ t: "Ja", p: 0 }, { t: "Nej", p: 1 }] });
+
+			const SPORGSMAAL = [
+				// ---------- Dine originale ----------
+				ja("Kan du sidde stille i mindst én time uden at tjekke din telefon?"),
+				ja("Har du et yndlingstæppe?"),
+				ja("Tænder du stearinlys, selv når du er alene?"),
+				{ q: "Har du hyggelyde?", svar: [
+					{ t: "Ja", p: 1, opfolg: ja("Er de high pitched?") },
+					{ t: "Nej", p: 0 }
+				]},
+				ja("Laver du lyde, når maden smager godt?"),
+				ja("Er kaffe om morgenen det vigtigste?"),
+				ja("Foretrækker du regn udenfor, når du er indenfor?"),
+				ja("Har du nogensinde sagt \"det er bare hyggeligt\" som en komplet forklaring?"),
+				ja("Kan du lide at lave mad til andre?"),
+				ja("Bliver du glad af en kop varm kakao?"),
+				ja("Er du den type, der foreslår \"vi bliver bare hjemme\"?"),
+
+				// ---------- NYE FORSLAG – vurder selv ----------
+				ja("Har du en fast plads i sofaen?"),
+				ja("Ejer du mere end ét par uldsokker?"),
+				ja("Har du nogensinde taget nattøj på før kl. 18 – frivilligt?"),
+				nej("Bliver du rastløs, hvis der ikke står noget i kalenderen i weekenden?"),
+				{ q: "Hvilket lys er tændt hjemme hos dig lige nu?", svar: [
+					{ t: "Stearinlys", p: 1 },
+					{ t: "En lille lampe i hjørnet", p: 1 },
+					{ t: "Loftslampen", p: 0 },
+					{ t: "Lysstofrør", p: 0 }
+				]},
+				{ q: "Hvor mange mennesker skal der til en perfekt aften?", svar: [
+					{ t: "Bare mig", p: 1 },
+					{ t: "2–6", p: 1 },
+					{ t: "7–15", p: 0 },
+					{ t: "Over 50", p: 0 }
+				]},
+				ja("Har du en yndlingskop?"),
+				ja("Ser du den samme julefilm hvert eneste år?"),
+				ja("Laver du suppe, så snart det bliver efterår?"),
+				ja("Vil du hellere spille brætspil end gå i byen?"),
+				ja("Har du nogensinde sagt \"skal vi ikke bare sætte en kande te over?\""),
+				ja("Sover du til middag i weekenden uden dårlig samvittighed?"),
+				ja("Spiser du kage uden nogen særlig anledning?"),
+				{ q: "Hvad drikker du en regnvejrssøndag?", svar: [
+					{ t: "Te", p: 1 },
+					{ t: "Kakao", p: 1 },
+					{ t: "Gløgg", p: 1 },
+					{ t: "Energidrik", p: 0 }
+				]},
+				ja("Har du en lyskæde, der hænger fremme hele året?"),
+				ja("Bliver du glad, når det sner?"),
+				ja("Har du nogensinde skrevet \"hyggeaften\" ind i din kalender?"),
+				nej("Tjekker du arbejdsmails i sofaen søndag aften?"),
+				ja("Pakker du dig ind i et tæppe, selvom det ikke er koldt?"),
+				ja("Bager du, bare fordi lejligheden skal dufte af noget?"),
+				{ q: "Hvad er den perfekte fredag?", svar: [
+					{ t: "Sofa, tæppe og film", p: 1 },
+					{ t: "Middag med de nærmeste", p: 1 },
+					{ t: "Byen til kl. 05", p: 0 },
+					{ t: "Overarbejde", p: 0 }
+				]},
+
+				// ---------- Billedspørgsmål (altid sidst) ----------
+				{ q: "Hvilket af disse huse er hyggeligt?", billeder: true, svar: [
+					{ img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80", alt: "Moderne sort luksusvilla", p: 0 },
+					{ img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&q=80", alt: "Sort luksusvilla", p: 0 },
+					{ img: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400&q=80", alt: "Hytte i skoven med bål", p: 1 },
+					{ img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&q=80", alt: "Luksuriøst sort hus", p: 0 }
+				]}
+			];
+
+			/* Resultatniveauer (procentgrænse: fra og med) */
+			const NIVEAUER = [
+				{ fra: 80, bjorn: "bjorn-glad",    anim: "bounce 1.2s ease-in-out infinite", tekst: "du er en hygger." },
+				{ fra: 50, bjorn: "bjorn-neutral", anim: "bounce 2s ease-in-out infinite",   tekst: "du er næsten en hygger." },
+				{ fra: 0,  bjorn: "bjorn-ked",     anim: "sad 2.5s ease-in-out infinite",    tekst: "du er ikke en hygger." }
+			];
+
+			/* ===================== Logik ===================== */
+
+			let koe, pos, point, maks, hovedNr;
+
+			function visSektion(id) {
+				document.querySelectorAll(".sektion").forEach(el => el.classList.remove("aktiv"));
+				document.getElementById(id).classList.add("aktiv");
 			}
 
-			let index = 0;
+			function start() {
+				koe = SPORGSMAAL.map(s => ({ ...s, erOpfolg: false }));
+				pos = 0;
+				point = 0;
+				maks = 0;      // max-point tælles kun for spørgsmål, der faktisk bliver vist
+				hovedNr = 0;
+				document.getElementById("word").classList.add("skjult");
+				visSektion("quiz");
+				visSporgsmaal();
+			}
 
-			function showNext() {
-				const pos = positions[index % positions.length];
-				index++;
+			function visSporgsmaal() {
+				const s = koe[pos];
+				if (!s.erOpfolg) hovedNr++;
 
-				el.style.top = pos.top + "%";
-				el.style.left = pos.left + "%";
-				el.style.opacity = "1";
+				const total = SPORGSMAAL.length;
+				document.getElementById("nummer").textContent =
+					"spørgsmål " + (s.erOpfolg ? hovedNr + "b" : hovedNr) + " / " + total;
+				document.getElementById("progress-fyld").style.width = (hovedNr / total * 100) + "%";
+				document.getElementById("spoergsmaal").textContent = s.q;
 
+				const boks = document.getElementById("svar");
+				boks.innerHTML = "";
+				boks.className = s.billeder ? "billeder" : "svar";
+
+				s.svar.forEach(valg => {
+					const knap = document.createElement("button");
+					if (valg.img) {
+						const img = document.createElement("img");
+						img.src = valg.img;
+						img.alt = valg.alt || "";
+						knap.appendChild(img);
+					} else {
+						knap.className = "knap";
+						knap.textContent = valg.t;
+					}
+					knap.onclick = () => vaelg(s, valg);
+					boks.appendChild(knap);
+				});
+
+				const indhold = document.getElementById("quiz-indhold");
+				indhold.classList.remove("fade");
+				void indhold.offsetWidth;
+				indhold.classList.add("fade");
+			}
+
+			function vaelg(s, valg) {
+				point += valg.p;
+				maks += Math.max(...s.svar.map(v => v.p));
+
+				if (valg.opfolg) {
+					koe.splice(pos + 1, 0, { ...valg.opfolg, erOpfolg: true });
+				}
+
+				pos++;
+				if (pos < koe.length) visSporgsmaal();
+				else visResultat();
+			}
+
+			function visResultat() {
+				visSektion("resultat");
+
+				const pct = maks > 0 ? Math.round(point / maks * 100) : 0;
+				const niveau = NIVEAUER.find(n => pct >= n.fra);
+
+				const container = document.getElementById("bjorn-container");
+				container.innerHTML = "";
+				const bjorn = document.getElementById(niveau.bjorn).cloneNode(true);
+				bjorn.removeAttribute("id");
+				bjorn.style.animation = niveau.anim;
+				container.appendChild(bjorn);
+
+				const scoreTekst = document.getElementById("score-tekst");
+				const scoreSub = document.getElementById("score-sub");
+				const scorePoint = document.getElementById("score-point");
+				const igen = document.getElementById("igen-knap");
+
+				scoreTekst.textContent = pct + "%";
+				scoreSub.textContent = niveau.tekst;
+				scorePoint.textContent = point + " af " + maks + " hyggepoint";
+
+				[scoreTekst, scoreSub, scorePoint, igen].forEach(el => el.style.opacity = "0");
 				setTimeout(() => {
-					el.style.opacity = "0";
-					setTimeout(showNext, 1500);
+					scoreTekst.style.opacity = "1";
+					setTimeout(() => {
+						scoreSub.style.opacity = "1";
+						scorePoint.style.opacity = "1";
+						setTimeout(() => igen.style.opacity = "1", 1000);
+					}, 800);
+				}, 300);
+			}
+
+			/* Svævende ord på forsiden */
+			const ord = document.getElementById("word");
+			const margin = 5;
+			function visNaesteOrd() {
+				ord.style.top  = (margin + Math.random() * (100 - margin * 2)) + "%";
+				ord.style.left = (margin + Math.random() * (80 - margin * 2)) + "%";
+				ord.style.opacity = "1";
+				setTimeout(() => {
+					ord.style.opacity = "0";
+					setTimeout(visNaesteOrd, 1500);
 				}, 2000);
 			}
-
-			showNext();
+			visNaesteOrd();
 		</script>
 	</body>
 </html>
